@@ -23,7 +23,6 @@ type AwesomeAPIResponse struct {
 var db *sql.DB
 
 func main() {
-	ctx := context.Background()
 	var err error
 	db, err = sql.Open("sqlite", "./cotacoes.db")
 	if err != nil {
@@ -31,10 +30,7 @@ func main() {
 	}
 	defer db.Close()
 
-	ctx, cancel := context.WithTimeout(ctx, 10*time.Millisecond)
-	defer cancel()
-
-	_, err = db.ExecContext(ctx, `
+	_, err = db.Exec(`
 		CREATE TABLE IF NOT EXISTS cotacoes (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			bid TEXT NOT NULL,
