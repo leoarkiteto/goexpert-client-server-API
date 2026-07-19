@@ -15,6 +15,23 @@ type CotacaoResponse struct {
 	Bid string `json:"bid"`
 }
 
+func salvarLocal(bid string) {
+	content := fmt.Sprintf("Dólar: %s\n", bid)
+
+	file, err := os.Create("cotacao.txt")
+	if err != nil {
+		log.Fatalf("Error creating file: %v", err)
+	}
+	defer file.Close()
+
+	_, err = file.WriteString(content)
+	if err != nil {
+		log.Fatalf("Error writing to file: %v", err)
+	}
+
+	fmt.Printf("Cotação salva em cotacao.txt: Dólar: %s\n", bid)
+}
+
 func main() {
 	ctx := context.Background()
 	ctx, cancel := context.WithTimeout(ctx, 300*time.Millisecond)
@@ -47,10 +64,5 @@ func main() {
 		log.Fatalf("Error parsing JSON response: %v", err)
 	}
 
-	content := fmt.Sprintf("Dólar: %s\n", cotacao.Bid)
-	if err := os.WriteFile("cotacao.txt", []byte(content), 0o644); err != nil {
-		log.Fatalf("Error writing file: %v", err)
-	}
-
-	fmt.Printf("Cotação salva em cotacao.txt: Dólar: %s\n", cotacao.Bid)
+	salvarLocal(cotacao.Bid)
 }
